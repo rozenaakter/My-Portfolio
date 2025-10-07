@@ -3,7 +3,6 @@ import About from '@/components/About';
 import BlogSection from '@/components/BlogSection';
 import ClientReviews from '@/components/ClientReviews';
 import Contact from '@/components/Contact';
-// import ContactPage from '@/components/ContactPage';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
@@ -20,9 +19,7 @@ export default function Home() {
       <ClientReviews/>
       <Portfolio/>
       <BlogSection/>
-      <Contact/>
-      {/* <ContactPage/> */}
-      
+      <Contact/>      
       <Footer/>
       
       

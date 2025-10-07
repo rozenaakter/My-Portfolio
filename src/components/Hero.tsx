@@ -13,17 +13,22 @@ interface Particle {
   life: number;
 }
 
-export default function Hero() {
+export default function Hero2() {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isInSection, setIsInSection] = useState(false);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [isMounted, setIsMounted] = useState(false);
   
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  const rotateX = useTransform(mouseY, [0, typeof window !== 'undefined' ? window.innerHeight : 800], [5, -5]);
-  const rotateY = useTransform(mouseX, [0, typeof window !== 'undefined' ? window.innerWidth : 1200], [-5, 5]);
+  const rotateX = useTransform(mouseY, [0, 800], [5, -5]);
+  const rotateY = useTransform(mouseX, [0, 1200], [-5, 5]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const backgroundCircles = useMemo(() => {
     return [...Array(20)].map((_, i) => {
@@ -143,6 +148,51 @@ export default function Hero() {
     }
   };
 
+  if (!isMounted) {
+    // SSR এর সময় static HTML রিটার্ন করুন
+    return (
+      <section className="min-h-screen flex items-center bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900 text-white pt-16 relative overflow-hidden">
+        <div className="container mx-auto px-4 py-12 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            {/* Content side */}
+            <div className="space-y-8 order-2 lg:order-1">
+              <div className="space-y-6 bg-gradient-to-br from-gray-800/40 via-purple-900/20 to-gray-800/40 backdrop-blur-sm rounded-2xl p-8 border border-purple-500/20 shadow-2xl">
+                <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
+                  Negotiation Expert
+                </h2>
+                <p className="text-gray-300 leading-relaxed text-lg font-light">
+                  I specialize in negotiating the best possible outcomes for my clients. 
+                  My approach combines technical expertise with strategic thinking to ensure 
+                  every project delivers maximum value.
+                </p>
+                {/* Static content */}
+              </div>
+            </div>
+            
+            {/* Image side */}
+            <div className="space-y-6 order-1 lg:order-2">
+              <div className="relative mx-auto w-64 h-64 rounded-full overflow-hidden"
+                style={{
+                  border: '4px solid transparent',
+                  backgroundImage: 'linear-gradient(gray-900, gray-900), linear-gradient(135deg, #a855f7, #6366f1, #ec4899, #8b5cf6)',
+                  backgroundOrigin: 'border-box',
+                  backgroundClip: 'padding-box, border-box',
+                }}
+              >
+                <img 
+                  src="/roze.jpeg" 
+                  alt="Your Name" 
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Static stats */}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section 
       className="min-h-screen flex items-center bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900 text-white pt-16 relative overflow-hidden"
@@ -185,9 +235,15 @@ export default function Hero() {
 
       <motion.div 
         className="absolute inset-0 overflow-hidden"
+        initial={{
+          rotateX: 0,
+          rotateY: 0,
+        }}
+        animate={{
+          rotateX: rotateX.get(),
+          rotateY: rotateY.get(),
+        }}
         style={{
-          rotateX,
-          rotateY,
           transformStyle: "preserve-3d",
         }}
       >
@@ -200,6 +256,12 @@ export default function Hero() {
               height: circle.size,
               top: `${circle.top}%`,
               left: `${circle.left}%`,
+            }}
+            initial={{
+              y: circle.yMovement[0],
+              x: circle.xMovement[0],
+              scale: circle.scaleMovement[0],
+              opacity: circle.opacityMovement[0],
             }}
             animate={{
               y: circle.yMovement,
@@ -226,6 +288,10 @@ export default function Hero() {
               top: `${circle.top}%`,
               left: `${circle.left}%`,
             }}
+            initial={{
+              y: circle.yMovement[0],
+              x: circle.xMovement[0],
+            }}
             animate={{
               y: circle.yMovement,
               x: circle.xMovement,
@@ -241,9 +307,15 @@ export default function Hero() {
 
       <motion.div 
         className="container mx-auto px-4 py-12 relative z-10"
+        initial={{
+          rotateX: 0,
+          rotateY: 0,
+        }}
+        animate={{
+          rotateX: rotateX.get(),
+          rotateY: rotateY.get(),
+        }}
         style={{
-          rotateX,
-          rotateY,
           transformStyle: "preserve-3d",
         }}
       >

@@ -4,7 +4,39 @@ import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRef, useState, useEffect } from 'react';
 
-export default function ClientReviews() {
+// Helper function to generate deterministic pseudo-random values
+// This ensures server and client render the same values
+const deterministicRandom = (seed: number) => {
+  const x = Math.sin(seed) * 10000;
+  return x - Math.floor(x);
+};
+
+// Helper function to round to a specific number of decimal places
+const roundToDecimals = (value: number, decimals: number = 4) => {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
+};
+
+// Generate bubble properties with consistent values
+const generateBubbleProperties = (index: number, sizeRange: [number, number] = [30, 80]) => {
+  const seed = index * 100; // Use a deterministic seed
+  const size = roundToDecimals(deterministicRandom(seed) * (sizeRange[1] - sizeRange[0]) + sizeRange[0]);
+  const top = roundToDecimals(deterministicRandom(seed + 1) * 100);
+  const left = roundToDecimals(deterministicRandom(seed + 2) * 100);
+  const duration = roundToDecimals(deterministicRandom(seed + 3) * 10 + 8);
+  const delay = roundToDecimals(deterministicRandom(seed + 4) * 5);
+  
+  return {
+    width: `${size}px`,
+    height: `${size}px`,
+    top: `${top}%`,
+    left: `${left}%`,
+    duration,
+    delay
+  };
+};
+
+export default function ClientR2() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.3 });
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -204,31 +236,34 @@ export default function ClientReviews() {
           }}
         />
         
-        {/* Small floating bubbles */}
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute rounded-full bg-gradient-to-r from-rose-200/60 to-orange-200/60 backdrop-blur-sm border border-white/30"
-            style={{
-              width: `${Math.random() * 80 + 30}px`,
-              height: `${Math.random() * 80 + 30}px`,
-              top: `${Math.random() * 100}%`,
-              left: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -Math.random() * 200 - 100, 0],
-              x: [0, Math.random() * 80 - 40, 0],
-              opacity: [0, 0.8, 0],
-              scale: [0, 1, 0]
-            }}
-            transition={{
-              duration: Math.random() * 10 + 8,
-              repeat: Infinity,
-              delay: Math.random() * 5,
-              ease: "easeInOut"
-            }}
-          />
-        ))}
+        {/* Small floating bubbles - using deterministic properties */}
+        {[...Array(20)].map((_, i) => {
+          const bubbleProps = generateBubbleProperties(i);
+          return (
+            <motion.div
+              key={i}
+              className="absolute rounded-full bg-gradient-to-r from-rose-200/60 to-orange-200/60 backdrop-blur-sm border border-white/30"
+              style={{
+                width: bubbleProps.width,
+                height: bubbleProps.height,
+                top: bubbleProps.top,
+                left: bubbleProps.left,
+              }}
+              animate={{
+                y: [0, -roundToDecimals(deterministicRandom(i * 20) * 200 - 100), 0],
+                x: [0, roundToDecimals(deterministicRandom(i * 21) * 80 - 40), 0],
+                opacity: [0, 0.8, 0],
+                scale: [0, 1, 0]
+              }}
+              transition={{
+                duration: bubbleProps.duration,
+                repeat: Infinity,
+                delay: bubbleProps.delay,
+                ease: "easeInOut"
+              }}
+            />
+          );
+        })}
       </div>
 
       <div className="container mx-auto max-w-6xl relative z-10">
@@ -249,31 +284,34 @@ export default function ClientReviews() {
                 </span>
               </motion.h2>
               
-              {/* Floating bubbles around title */}
-              {[...Array(12)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
-                  style={{
-                    width: `${Math.random() * 40 + 20}px`,
-                    height: `${Math.random() * 40 + 20}px`,
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 120 - 10}%`,
-                  }}
-                  animate={{
-                    y: [0, -Math.random() * 60 - 20, 0],
-                    x: [0, Math.random() * 30 - 15, 0],
-                    opacity: [0, 0.9, 0],
-                    scale: [0, 1, 0]
-                  }}
-                  transition={{
-                    duration: Math.random() * 5 + 3,
-                    repeat: Infinity,
-                    delay: Math.random() * 2,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
+              {/* Floating bubbles around title - using deterministic properties */}
+              {[...Array(12)].map((_, i) => {
+                const bubbleProps = generateBubbleProperties(i, [20, 40]);
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
+                    style={{
+                      width: bubbleProps.width,
+                      height: bubbleProps.height,
+                      top: bubbleProps.top,
+                      left: `${roundToDecimals(deterministicRandom(i * 22) * 120 - 10)}%`,
+                    }}
+                    animate={{
+                      y: [0, -roundToDecimals(deterministicRandom(i * 23) * 60 - 20), 0],
+                      x: [0, roundToDecimals(deterministicRandom(i * 24) * 30 - 15), 0],
+                      opacity: [0, 0.9, 0],
+                      scale: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: roundToDecimals(deterministicRandom(i * 25) * 5 + 3),
+                      repeat: Infinity,
+                      delay: roundToDecimals(deterministicRandom(i * 26) * 2),
+                      ease: "easeInOut"
+                    }}
+                  />
+                );
+              })}
             </motion.div>
             
             <motion.div
@@ -303,31 +341,34 @@ export default function ClientReviews() {
                       whileHover={{ scale: 1.02, y: -5 }}
                       transition={{ duration: 0.3 }}
                     >
-                      {/* Floating bubbles inside card */}
-                      {[...Array(10)].map((_, i) => (
-                        <motion.div
-                          key={i}
-                          className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
-                          style={{
-                            width: `${Math.random() * 30 + 15}px`,
-                            height: `${Math.random() * 30 + 15}px`,
-                            top: `${Math.random() * 100}%`,
-                            left: `${Math.random() * 100}%`,
-                          }}
-                          animate={{
-                            y: [0, -Math.random() * 40 - 15, 0],
-                            x: [0, Math.random() * 20 - 10, 0],
-                            opacity: [0, 0.7, 0],
-                            scale: [0, 1, 0]
-                          }}
-                          transition={{
-                            duration: Math.random() * 5 + 3,
-                            repeat: Infinity,
-                            delay: Math.random() * 1,
-                            ease: "easeInOut"
-                          }}
-                        />
-                      ))}
+                      {/* Floating bubbles inside card - using deterministic properties */}
+                      {[...Array(10)].map((_, i) => {
+                        const bubbleProps = generateBubbleProperties(i + 100, [15, 30]);
+                        return (
+                          <motion.div
+                            key={i}
+                            className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
+                            style={{
+                              width: bubbleProps.width,
+                              height: bubbleProps.height,
+                              top: bubbleProps.top,
+                              left: bubbleProps.left,
+                            }}
+                            animate={{
+                              y: [0, -roundToDecimals(deterministicRandom(i * 30 + 100) * 40 - 15), 0],
+                              x: [0, roundToDecimals(deterministicRandom(i * 31 + 100) * 20 - 10), 0],
+                              opacity: [0, 0.7, 0],
+                              scale: [0, 1, 0]
+                            }}
+                            transition={{
+                              duration: roundToDecimals(deterministicRandom(i * 32 + 100) * 5 + 3),
+                              repeat: Infinity,
+                              delay: roundToDecimals(deterministicRandom(i * 33 + 100) * 1),
+                              ease: "easeInOut"
+                            }}
+                          />
+                        );
+                      })}
                       
                       <motion.div className="absolute top-6 right-6 opacity-5">
                         <Quote size={60} className="text-orange-500" />
@@ -396,31 +437,34 @@ export default function ClientReviews() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Bubble effect inside button */}
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-white/30 border border-white/50"
-                    style={{
-                      width: `${Math.random() * 12 + 6}px`,
-                      height: `${Math.random() * 12 + 6}px`,
-                      top: `${Math.random() * 100}%`,
-                      left: `${Math.random() * 100}%`,
-                    }}
-                    animate={{
-                      y: [0, -Math.random() * 20 - 8, 0],
-                      x: [0, Math.random() * 10 - 5, 0],
-                      opacity: [0, 0.8, 0],
-                      scale: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: Math.random() * 3 + 1,
-                      repeat: Infinity,
-                      delay: Math.random() * 0.5,
-                      ease: "easeInOut"
-                    }}
-                  />
-                ))}
+                {/* Bubble effect inside button - using deterministic properties */}
+                {[...Array(6)].map((_, i) => {
+                  const bubbleProps = generateBubbleProperties(i + 200, [6, 12]);
+                  return (
+                    <motion.div
+                      key={i}
+                      className="absolute rounded-full bg-white/30 border border-white/50"
+                      style={{
+                        width: bubbleProps.width,
+                        height: bubbleProps.height,
+                        top: bubbleProps.top,
+                        left: bubbleProps.left,
+                      }}
+                      animate={{
+                        y: [0, -roundToDecimals(deterministicRandom(i * 40 + 200) * 20 - 8), 0],
+                        x: [0, roundToDecimals(deterministicRandom(i * 41 + 200) * 10 - 5), 0],
+                        opacity: [0, 0.8, 0],
+                        scale: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: roundToDecimals(deterministicRandom(i * 42 + 200) * 3 + 1),
+                        repeat: Infinity,
+                        delay: roundToDecimals(deterministicRandom(i * 43 + 200) * 0.5),
+                        ease: "easeInOut"
+                      }}
+                    />
+                  );
+                })}
                 <ChevronLeft className="text-white" size={24} />
               </motion.button>
 
@@ -430,31 +474,34 @@ export default function ClientReviews() {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Bubble effect inside button */}
-                {[...Array(6)].map((_, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-white/30 border border-white/50"
-                    style={{
-                      width: `${Math.random() * 12 + 6}px`,
-                      height: `${Math.random() * 12 + 6}px`,
-                      top: `${Math.random() * 100}%`,
-                      left: `${Math.random() * 100}%`,
-                    }}
-                    animate={{
-                      y: [0, -Math.random() * 20 - 8, 0],
-                      x: [0, Math.random() * 10 - 5, 0],
-                      opacity: [0, 0.8, 0],
-                      scale: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: Math.random() * 3 + 1,
-                      repeat: Infinity,
-                      delay: Math.random() * 0.5,
-                      ease: "easeInOut"
-                    }}
-                  />
-                ))}
+                {/* Bubble effect inside button - using deterministic properties */}
+                {[...Array(6)].map((_, i) => {
+                  const bubbleProps = generateBubbleProperties(i + 300, [6, 12]);
+                  return (
+                    <motion.div
+                      key={i}
+                      className="absolute rounded-full bg-white/30 border border-white/50"
+                      style={{
+                        width: bubbleProps.width,
+                        height: bubbleProps.height,
+                        top: bubbleProps.top,
+                        left: bubbleProps.left,
+                      }}
+                      animate={{
+                        y: [0, -roundToDecimals(deterministicRandom(i * 50 + 300) * 20 - 8), 0],
+                        x: [0, roundToDecimals(deterministicRandom(i * 51 + 300) * 10 - 5), 0],
+                        opacity: [0, 0.8, 0],
+                        scale: [0, 1, 0]
+                      }}
+                      transition={{
+                        duration: roundToDecimals(deterministicRandom(i * 52 + 300) * 3 + 1),
+                        repeat: Infinity,
+                        delay: roundToDecimals(deterministicRandom(i * 53 + 300) * 0.5),
+                        ease: "easeInOut"
+                      }}
+                    />
+                  );
+                })}
                 <ChevronRight className="text-white" size={24} />
               </motion.button>
             </div>
@@ -484,31 +531,34 @@ export default function ClientReviews() {
                 More Reviews
               </h3>
               
-              {/* Floating bubbles around subtitle */}
-              {[...Array(10)].map((_, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
-                  style={{
-                    width: `${Math.random() * 35 + 15}px`,
-                    height: `${Math.random() * 35 + 15}px`,
-                    top: `${Math.random() * 100}%`,
-                    left: `${Math.random() * 120 - 10}%`,
-                  }}
-                  animate={{
-                    y: [0, -Math.random() * 50 - 15, 0],
-                    x: [0, Math.random() * 20 - 10, 0],
-                    opacity: [0, 0.8, 0],
-                    scale: [0, 1, 0]
-                  }}
-                  transition={{
-                    duration: Math.random() * 4 + 2,
-                    repeat: Infinity,
-                    delay: Math.random() * 1,
-                    ease: "easeInOut"
-                  }}
-                />
-              ))}
+              {/* Floating bubbles around subtitle - using deterministic properties */}
+              {[...Array(10)].map((_, i) => {
+                const bubbleProps = generateBubbleProperties(i + 400, [15, 35]);
+                return (
+                  <motion.div
+                    key={i}
+                    className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
+                    style={{
+                      width: bubbleProps.width,
+                      height: bubbleProps.height,
+                      top: bubbleProps.top,
+                      left: `${roundToDecimals(deterministicRandom(i * 60 + 400) * 120 - 10)}%`,
+                    }}
+                    animate={{
+                      y: [0, -roundToDecimals(deterministicRandom(i * 61 + 400) * 50 - 15), 0],
+                      x: [0, roundToDecimals(deterministicRandom(i * 62 + 400) * 20 - 10), 0],
+                      opacity: [0, 0.8, 0],
+                      scale: [0, 1, 0]
+                    }}
+                    transition={{
+                      duration: roundToDecimals(deterministicRandom(i * 63 + 400) * 4 + 2),
+                      repeat: Infinity,
+                      delay: roundToDecimals(deterministicRandom(i * 64 + 400) * 1),
+                      ease: "easeInOut"
+                    }}
+                  />
+                );
+              })}
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -525,31 +575,34 @@ export default function ClientReviews() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  {/* Floating bubbles inside grid card */}
-                  {[...Array(8)].map((_, i) => (
-                    <motion.div
-                      key={i}
-                      className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
-                      style={{
-                        width: `${Math.random() * 25 + 10}px`,
-                        height: `${Math.random() * 25 + 10}px`,
-                        top: `${Math.random() * 100}%`,
-                        left: `${Math.random() * 100}%`,
-                      }}
-                      animate={{
-                        y: [0, -Math.random() * 30 - 10, 0],
-                        x: [0, Math.random() * 15 - 7.5, 0],
-                        opacity: [0, 0.7, 0],
-                        scale: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: Math.random() * 4 + 2,
-                        repeat: Infinity,
-                        delay: Math.random() * 0.8,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ))}
+                  {/* Floating bubbles inside grid card - using deterministic properties */}
+                  {[...Array(8)].map((_, i) => {
+                    const bubbleProps = generateBubbleProperties(i + 500 + index * 10, [10, 25]);
+                    return (
+                      <motion.div
+                        key={i}
+                        className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
+                        style={{
+                          width: bubbleProps.width,
+                          height: bubbleProps.height,
+                          top: bubbleProps.top,
+                          left: bubbleProps.left,
+                        }}
+                        animate={{
+                          y: [0, -roundToDecimals(deterministicRandom(i * 70 + 500 + index * 10) * 30 - 10), 0],
+                          x: [0, roundToDecimals(deterministicRandom(i * 71 + 500 + index * 10) * 15 - 7.5), 0],
+                          opacity: [0, 0.7, 0],
+                          scale: [0, 1, 0]
+                        }}
+                        transition={{
+                          duration: roundToDecimals(deterministicRandom(i * 72 + 500 + index * 10) * 4 + 2),
+                          repeat: Infinity,
+                          delay: roundToDecimals(deterministicRandom(i * 73 + 500 + index * 10) * 0.8),
+                          ease: "easeInOut"
+                        }}
+                      />
+                    );
+                  })}
                   
                   {/* Background gradient overlay on hover */}
                   <motion.div 
