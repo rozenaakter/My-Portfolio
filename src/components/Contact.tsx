@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion'; // ← Variants ইমপোর্ট করা হয়েছে
-import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, MessageCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter,Facebook,Instagram , MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 
 const Contact = () => {
@@ -18,14 +18,14 @@ const Contact = () => {
     {
       icon: Mail,
       title: 'Email Me',
-      value: 'rozena@example.com',
+      value: '90rozena@gmail.com',
       link: 'mailto:rozena@example.com',
       color: 'from-purple-500 to-pink-500'
     },
     {
       icon: Phone,
       title: 'Call Me',
-      value: '+1 (555) 123-4567',
+      value: '+88 01723456789',
       link: 'tel:+15551234567',
       color: 'from-green-500 to-blue-500'
     },
@@ -39,32 +39,44 @@ const Contact = () => {
     {
       icon: MessageCircle,
       title: 'WhatsApp',
-      value: '+1 (555) 123-4567',
+      value: '+88 01723456789',
       link: 'https://wa.me/15551234567',
       color: 'from-green-400 to-green-600'
     }
   ];
 
   const socialLinks = [
-    {
-      icon: Github,
-      name: 'GitHub',
-      url: 'https://github.com',
-      color: 'hover:text-gray-400'
-    },
-    {
-      icon: Linkedin,
-      name: 'LinkedIn',
-      url: 'https://linkedin.com',
-      color: 'hover:text-blue-400'
-    },
-    {
-      icon: Twitter,
-      name: 'Twitter',
-      url: 'https://twitter.com',
-      color: 'hover:text-sky-400'
-    }
-  ];
+  {
+    icon: Github,
+    name: 'GitHub',
+    url: 'https://github.com',
+    color: 'hover:text-gray-400'
+  },
+  {
+    icon: Linkedin,
+    name: 'LinkedIn',
+    url: 'https://linkedin.com',
+    color: 'hover:text-blue-400'
+  },
+  {
+    icon: Twitter,
+    name: 'Twitter',
+    url: 'https://twitter.com',
+    color: 'hover:text-sky-400'
+  },
+  {
+    icon: Facebook,
+    name: 'Facebook',
+    url: 'https://facebook.com',
+    color: 'hover:text-blue-600'
+  },
+  {
+    icon: Instagram,
+    name: 'Instagram',
+    url: 'https://instagram.com',
+    color: 'hover:text-pink-500'
+  }
+];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({

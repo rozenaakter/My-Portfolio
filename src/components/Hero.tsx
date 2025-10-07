@@ -161,7 +161,7 @@ export default function Hero2() {
                 <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent">
                   Negotiation Expert
                 </h2>
-                <p className="text-gray-300 leading-relaxed text-lg font-light">
+                <p className="text-gray-700 shadow-lg leading-relaxed text-lg font-light">
                   I specialize in negotiating the best possible outcomes for my clients. 
                   My approach combines technical expertise with strategic thinking to ensure 
                   every project delivers maximum value.
@@ -364,7 +364,7 @@ export default function Hero2() {
               </motion.div>
               
               <motion.p 
-                className="text-gray-300 leading-relaxed text-lg font-light"
+                className="text-white/90 leading-relaxed text-lg font-light"
                 variants={itemVariants}
               >
                 I specialize in negotiating the best possible outcomes for my clients. 
@@ -388,8 +388,8 @@ export default function Hero2() {
                     <span className="text-sm font-bold text-white">✓</span>
                   </motion.div>
                   <div>
-                    <p className="font-semibold text-purple-300 text-lg mb-1">Client Satisfaction</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="font-semibold text-purple-400 text-lg mb-1">Client Satisfaction</p>
+                    <p className="text-white/90">
                       My clients consistently report high levels of satisfaction with the 
                       quality and timeliness of my work.
                     </p>
@@ -409,7 +409,7 @@ export default function Hero2() {
                   </motion.div>
                   <div>
                     <p className="font-semibold text-indigo-300 text-lg mb-1">Value Delivery</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-white/90">
                       I focus on understanding your business needs and delivering solutions 
                       that provide real value and competitive advantage.
                     </p>
@@ -429,7 +429,7 @@ export default function Hero2() {
                   </motion.div>
                   <div>
                     <p className="font-semibold text-pink-300 text-lg mb-1">Long-term Partnerships</p>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-white/90">
                       I believe in building lasting relationships with clients based on trust, 
                       transparency, and mutual success.
                     </p>
@@ -504,7 +504,7 @@ export default function Hero2() {
                   animate={{ y: isHovered ? 0 : 20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span>Hello</span>
+                  <span>Hello....</span>
                   <Hand 
                     className="text-yellow-400" 
                     size={24}
@@ -533,10 +533,10 @@ export default function Hero2() {
             >
               <h1 className="text-4xl md:text-5xl font-bold mb-2">
                 <span className="bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
-                  Your Name
+                  Rozena Akter
                 </span>
               </h1>
-              <p className="text-xl text-purple-300">Full Stack Developer</p>
+              <p className="text-xl text-purple-300">Fontend Developer</p>
             </motion.div>
 
             <motion.div 
@@ -560,8 +560,8 @@ export default function Hero2() {
                 >
                   <Briefcase className="text-purple-400" size={28} />
                 </motion.div>
-                <h3 className="text-3xl font-bold">50+</h3>
-                <p className="text-gray-400 text-sm">Projects Completed</p>
+                <h3 className="text-3xl font-bold">30+</h3>
+                <p className="text-white/90">Projects Completed</p>
               </motion.div>
               
               <motion.div 
@@ -581,8 +581,8 @@ export default function Hero2() {
                 >
                   <Users className="text-indigo-400" size={28} />
                 </motion.div>
-                <h3 className="text-3xl font-bold">30+</h3>
-                <p className="text-gray-400 text-sm">Happy Clients</p>
+                <h3 className="text-3xl font-bold">20+</h3>
+                <p className="text-white/90">Happy Clients</p>
               </motion.div>
               
               <motion.div 
@@ -603,7 +603,7 @@ export default function Hero2() {
                   <Star className="text-purple-400" size={28} />
                 </motion.div>
                 <h3 className="text-3xl font-bold">5+</h3>
-                <p className="text-gray-400 text-sm">Years Experience</p>
+                <p className="text-white/90">Years Experience</p>
               </motion.div>
               
               <motion.div 
@@ -624,7 +624,7 @@ export default function Hero2() {
                   <Award className="text-indigo-400" size={28} />
                 </motion.div>
                 <h3 className="text-3xl font-bold">98%</h3>
-                <p className="text-gray-400 text-sm">Success Rate</p>
+                <p className="text-white/90">Success Rate</p>
               </motion.div>
             </motion.div>
           </motion.div>

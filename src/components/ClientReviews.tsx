@@ -3,7 +3,7 @@
 import { motion, useInView, Variants } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, useMemo } from 'react';
 
 // Helper function to generate deterministic pseudo-random values
 const deterministicRandom = (seed: number) => {
@@ -36,10 +36,64 @@ const generateBubbleProperties = (index: number, sizeRange: [number, number] = [
   };
 };
 
+// Memoized Bubble component
+const Bubble = ({ index, sizeRange, seedOffset = 0 }: { 
+  index: number; 
+  sizeRange?: [number, number];
+  seedOffset?: number;
+}) => {
+  const bubbleProps = generateBubbleProperties(index + seedOffset, sizeRange);
+  
+  return (
+    <motion.div
+      className="absolute rounded-full bg-gradient-to-r from-rose-200/60 to-orange-200/60 backdrop-blur-sm border border-white/30"
+      style={{
+        width: bubbleProps.width,
+        height: bubbleProps.height,
+        top: bubbleProps.top,
+        left: bubbleProps.left,
+      }}
+      animate={{
+        y: [0, -roundToDecimals(deterministicRandom(index * 20 + seedOffset) * 200 - 100), 0],
+        x: [0, roundToDecimals(deterministicRandom(index * 21 + seedOffset) * 80 - 40), 0],
+        opacity: [0, 0.8, 0],
+        scale: [0, 1, 0]
+      }}
+      transition={{
+        duration: bubbleProps.duration,
+        repeat: Infinity,
+        delay: bubbleProps.delay,
+        ease: [0.42, 0, 0.58, 1]
+      }}
+    />
+  );
+};
+
 export default function ClientR2() {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, amount: 0.3 });
+  const isInView = useInView(ref, { once: true, amount: 0.1, margin: "-50px" });
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [shouldAnimate, setShouldAnimate] = useState(false);
+
+  // Check if device is mobile
+  useEffect(() => {
+    const checkIfMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkIfMobile();
+    window.addEventListener('resize', checkIfMobile);
+    
+    return () => window.removeEventListener('resize', checkIfMobile);
+  }, []);
+
+  // Enable animations only when in view
+  useEffect(() => {
+    if (isInView) {
+      setShouldAnimate(true);
+    }
+  }, [isInView]);
 
   const reviews = [
     {
@@ -136,12 +190,14 @@ export default function ClientR2() {
 
   // Auto-slide every 3 seconds
   useEffect(() => {
+    if (!shouldAnimate) return;
+    
     const interval = setInterval(() => {
       setCurrentIndex((prev) => (prev + 1) % reviews.length);
-    }, 3000);
+    }, 4000);
 
     return () => clearInterval(interval);
-  }, [reviews.length]);
+  }, [shouldAnimate, reviews.length]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
@@ -161,24 +217,71 @@ export default function ClientR2() {
     return reviews.slice(0, 4);
   };
 
+  // Memoize bubbles to prevent unnecessary recalculations
+  const backgroundBubbles = useMemo(() => {
+    return shouldAnimate && !isMobile ? 
+      Array.from({ length: 8 }).map((_, i) => <Bubble key={i} index={i} />) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
+  const titleBubbles = useMemo(() => {
+    return shouldAnimate && !isMobile ? 
+      Array.from({ length: 6 }).map((_, i) => (
+        <Bubble key={i} index={i} sizeRange={[20, 40]} seedOffset={100} />
+      )) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
+  const cardBubbles = useMemo(() => {
+    return shouldAnimate ? 
+      Array.from({ length: isMobile ? 3 : 5 }).map((_, i) => (
+        <Bubble key={i} index={i} sizeRange={[15, 30]} seedOffset={200} />
+      )) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
+  const buttonBubbles = useMemo(() => {
+    return shouldAnimate ? 
+      Array.from({ length: isMobile ? 2 : 4 }).map((_, i) => (
+        <Bubble key={i} index={i} sizeRange={[6, 12]} seedOffset={300} />
+      )) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
+  const subtitleBubbles = useMemo(() => {
+    return shouldAnimate && !isMobile ? 
+      Array.from({ length: 5 }).map((_, i) => (
+        <Bubble key={i} index={i} sizeRange={[15, 35]} seedOffset={400} />
+      )) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
+  const gridCardBubbles = useMemo(() => {
+    return shouldAnimate ? 
+      Array.from({ length: isMobile ? 2 : 4 }).map((_, i) => (
+        <Bubble key={i} index={i} sizeRange={[10, 25]} seedOffset={500} />
+      )) : 
+      null;
+  }, [shouldAnimate, isMobile]);
+
   const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.2,
-        delayChildren: 0.3
+        staggerChildren: isMobile ? 0 : 0.1,
+        delayChildren: isMobile ? 0 : 0.1
       }
     }
   };
 
   const itemVariants: Variants = {
-    hidden: { y: 30, opacity: 0 },
+    hidden: { y: isMobile ? 0 : 30, opacity: isMobile ? 1 : 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.6,
+        duration: isMobile ? 0 : 0.6,
         ease: [0.25, 0.1, 0.25, 1]
       }
     }
@@ -187,96 +290,74 @@ export default function ClientR2() {
   return (
     <section
       ref={ref}
-      className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-gray-900 py-16 px-4 relative overflow-hidden"
+      className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-gray-900 py-12 md:py-16 px-4 relative overflow-hidden"
       id="reviews"
     >
-      {/* Enhanced Background Decorative Elements with Bubbles */}
+      {/* Background Decorative Elements with Bubbles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Large animated bubbles */}
-        <motion.div
-          className="absolute top-20 left-10 w-96 h-96 bg-rose-300/55 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.4, 0.6, 0.4],
-            x: [0, 20, 0],
-            y: [0, -20, 0]
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: [0.42, 0, 0.58, 1]
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-72 h-72 bg-amber-300/25 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.4, 0.6, 0.4],
-            x: [0, -15, 0],
-            y: [0, 15, 0]
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: [0.42, 0, 0.58, 1]
-          }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-orange-300/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.4, 1],
-            opacity: [0.3, 0.5, 0.3],
-            x: [0, 30, 0],
-            y: [0, 20, 0]
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: [0.42, 0, 0.58, 1]
-          }}
-        />
-        
-        {/* Small floating bubbles - using deterministic properties */}
-        {[...Array(20)].map((_, i) => {
-          const bubbleProps = generateBubbleProperties(i);
-          return (
+        {shouldAnimate && (
+          <>
             <motion.div
-              key={i}
-              className="absolute rounded-full bg-gradient-to-r from-rose-200/60 to-orange-200/60 backdrop-blur-sm border border-white/30"
-              style={{
-                width: bubbleProps.width,
-                height: bubbleProps.height,
-                top: bubbleProps.top,
-                left: bubbleProps.left,
-              }}
+              className="absolute top-20 left-10 w-64 h-64 md:w-96 md:h-96 bg-rose-300/55 rounded-full blur-3xl"
               animate={{
-                y: [0, -roundToDecimals(deterministicRandom(i * 20) * 200 - 100), 0],
-                x: [0, roundToDecimals(deterministicRandom(i * 21) * 80 - 40), 0],
-                opacity: [0, 0.8, 0],
-                scale: [0, 1, 0]
+                scale: [1, 1.3, 1],
+                opacity: [0.4, 0.6, 0.4],
+                x: [0, 20, 0],
+                y: [0, -20, 0]
               }}
               transition={{
-                duration: bubbleProps.duration,
+                duration: 10,
                 repeat: Infinity,
-                delay: bubbleProps.delay,
                 ease: [0.42, 0, 0.58, 1]
               }}
             />
-          );
-        })}
+            <motion.div
+              className="absolute bottom-20 right-10 w-48 h-48 md:w-72 md:h-72 bg-amber-300/25 rounded-full blur-3xl"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.4, 0.6, 0.4],
+                x: [0, -15, 0],
+                y: [0, 15, 0]
+              }}
+              transition={{
+                duration: 8,
+                repeat: Infinity,
+                ease: [0.42, 0, 0.58, 1]
+              }}
+            />
+            <motion.div
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 md:w-96 md:h-96 bg-orange-300/20 rounded-full blur-3xl"
+              animate={{
+                scale: [1, 1.4, 1],
+                opacity: [0.3, 0.5, 0.3],
+                x: [0, 30, 0],
+                y: [0, 20, 0]
+              }}
+              transition={{
+                duration: 12,
+                repeat: Infinity,
+                ease: [0.42, 0, 0.58, 1]
+              }}
+            />
+          </>
+        )}
+        
+        {/* Small floating bubbles */}
+        {backgroundBubbles}
       </div>
 
       <div className="container mx-auto max-w-6xl relative z-10">
         <motion.div
           variants={containerVariants}
-          initial="hidden"
-          animate={isInView ? "visible" : "hidden"}
+          initial={isMobile ? "visible" : "hidden"}
+          animate={isInView ? "visible" : (isMobile ? "visible" : "hidden")}
         >
-          {/* Enhanced Section Title with Bubble Effect */}
+          {/* Section Title */}
           <motion.div className="text-center mb-8" variants={itemVariants}>
             <motion.div className="inline-block relative">
               <motion.h2
-                className="text-5xl md:text-6xl font-bold mb-2 inline-block"
+                className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2 inline-block"
                 whileHover={{ scale: 1.05 }}
               >
                 <span className="bg-gradient-to-r from-rose-600 via-orange-500 to-amber-500 bg-clip-text text-transparent">
@@ -284,50 +365,24 @@ export default function ClientR2() {
                 </span>
               </motion.h2>
               
-              {/* Floating bubbles around title - using deterministic properties */}
-              {[...Array(12)].map((_, i) => {
-                const bubbleProps = generateBubbleProperties(i, [20, 40]);
-                return (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
-                    style={{
-                      width: bubbleProps.width,
-                      height: bubbleProps.height,
-                      top: bubbleProps.top,
-                      left: `${roundToDecimals(deterministicRandom(i * 22) * 120 - 10)}%`,
-                    }}
-                    animate={{
-                      y: [0, -roundToDecimals(deterministicRandom(i * 23) * 60 - 20), 0],
-                      x: [0, roundToDecimals(deterministicRandom(i * 24) * 30 - 15), 0],
-                      opacity: [0, 0.9, 0],
-                      scale: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: roundToDecimals(deterministicRandom(i * 25) * 5 + 3),
-                      repeat: Infinity,
-                      delay: roundToDecimals(deterministicRandom(i * 26) * 2),
-                      ease: [0.42, 0, 0.58, 1]
-                    }}
-                  />
-                );
-              })}
+              {/* Floating bubbles around title */}
+              {titleBubbles}
             </motion.div>
             
             <motion.div
-              className="h-1 w-32 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 rounded-full mx-auto"
+              className="h-1 w-24 md:w-32 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500 rounded-full mx-auto"
               initial={{ width: 0 }}
-              animate={isInView ? { width: 128 } : { width: 0 }}
-              transition={{ duration: 0.8, delay: 0.5 }}
+              animate={isInView ? { width: isMobile ? 96 : 128 } : { width: 0 }}
+              transition={{ duration: 0.8, delay: isMobile ? 0 : 0.5 }}
             />
-            <p className="text-gray-600 mt-4 text-lg max-w-2xl mx-auto">
+            <p className="text-gray-600 mt-4 text-base md:text-lg max-w-2xl mx-auto">
               What my clients say about working with me
             </p>
           </motion.div>
 
-          {/* Enhanced Slider Container with Optimized Space */}
+          {/* Slider Container */}
           <motion.div className="relative mb-8" variants={itemVariants}>
-            <div className="relative overflow-hidden h-80 md:h-96">
+            <div className="relative overflow-hidden h-64 md:h-80 lg:h-96">
               <motion.div
                 className="flex"
                 animate={{ x: `-${currentIndex * 100}%` }}
@@ -337,48 +392,22 @@ export default function ClientR2() {
                   <div key={review.id} className="w-full flex-shrink-0 px-4">
                     {/* Card with optimized padding */}
                     <motion.div
-                      className="bg-white/90 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-rose-100 shadow-xl relative overflow-hidden group h-full flex flex-col"
+                      className="bg-white/90 backdrop-blur-md rounded-2xl p-4 md:p-6 lg:p-8 border border-rose-100 shadow-xl relative overflow-hidden group h-full flex flex-col"
                       whileHover={{ scale: 1.02, y: -5 }}
                       transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                     >
-                      {/* Floating bubbles inside card - using deterministic properties */}
-                      {[...Array(10)].map((_, i) => {
-                        const bubbleProps = generateBubbleProperties(i + 100, [15, 30]);
-                        return (
-                          <motion.div
-                            key={i}
-                            className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
-                            style={{
-                              width: bubbleProps.width,
-                              height: bubbleProps.height,
-                              top: bubbleProps.top,
-                              left: bubbleProps.left,
-                            }}
-                            animate={{
-                              y: [0, -roundToDecimals(deterministicRandom(i * 30 + 100) * 40 - 15), 0],
-                              x: [0, roundToDecimals(deterministicRandom(i * 31 + 100) * 20 - 10), 0],
-                              opacity: [0, 0.7, 0],
-                              scale: [0, 1, 0]
-                            }}
-                            transition={{
-                              duration: roundToDecimals(deterministicRandom(i * 32 + 100) * 5 + 3),
-                              repeat: Infinity,
-                              delay: roundToDecimals(deterministicRandom(i * 33 + 100) * 1),
-                              ease: [0.42, 0, 0.58, 1]
-                            }}
-                          />
-                        );
-                      })}
+                      {/* Floating bubbles inside card */}
+                      {cardBubbles}
                       
-                      <motion.div className="absolute top-6 right-6 opacity-5">
-                        <Quote size={60} className="text-orange-500" />
+                      <motion.div className="absolute top-4 right-4 opacity-5">
+                        <Quote size={48} className="text-orange-500" />
                       </motion.div>
 
-                      <div className="relative z-10 flex flex-col md:flex-row gap-6 items-center flex-grow">
+                      <div className="relative z-10 flex flex-col md:flex-row gap-4 md:gap-6 items-center flex-grow">
                         {/* Image with optimized size */}
-                        <div className="flex flex-col items-center gap-3 md:w-1/3">
+                        <div className="flex flex-col items-center gap-2 md:w-1/3">
                           <motion.div
-                            className={`relative w-24 h-24 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-br ${review.gradient} p-1 shadow-lg`}
+                            className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-3 border-transparent bg-gradient-to-br ${review.gradient} p-1 shadow-lg`}
                             whileHover={{ scale: 1.1, rotate: 5 }}
                             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                           >
@@ -386,19 +415,19 @@ export default function ClientR2() {
                               <Image
                                 src={review.image}
                                 alt={review.name}
-                                width={96}
-                                height={96}
+                                width={80}
+                                height={80}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                           </motion.div>
 
                           <div className="text-center">
-                            <h3 className="text-xl font-bold text-gray-800 mb-1">
+                            <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1">
                               {review.name}
                             </h3>
                             <p
-                              className={`text-sm bg-gradient-to-r ${review.gradient} bg-clip-text text-transparent font-semibold`}
+                              className={`text-xs md:text-sm bg-gradient-to-r ${review.gradient} bg-clip-text text-transparent font-semibold`}
                             >
                               {review.designation}
                             </p>
@@ -409,19 +438,19 @@ export default function ClientR2() {
                               <Star
                                 key={i}
                                 className="fill-yellow-400 text-yellow-400"
-                                size={18}
+                                size={16}
                               />
                             ))}
                           </div>
                         </div>
 
-                        {/* Review Text with professional look */}
+                        {/* Review Text */}
                         <div className="md:w-2/3 text-center md:text-left">
-                          <motion.p className="text-gray-700 text-base md:text-lg leading-relaxed italic">
+                          <motion.p className="text-gray-700 text-sm md:text-base leading-relaxed italic">
                             &ldquo;{review.review}&rdquo;
                           </motion.p>
                           <motion.div
-                            className={`h-1 w-24 bg-gradient-to-r ${review.gradient} rounded-full mt-4 mx-auto md:mx-0`}
+                            className={`h-1 w-16 md:w-24 bg-gradient-to-r ${review.gradient} rounded-full mt-3 mx-auto md:mx-0`}
                           />
                         </div>
                       </div>
@@ -431,93 +460,41 @@ export default function ClientR2() {
               </motion.div>
             </div>
 
-            {/* Enhanced Buttons with Bubble Effect */}
+            {/* Buttons */}
             <div className="absolute top-1/2 -translate-y-1/2 left-0 right-0 flex justify-between px-0 md:-mx-16 pointer-events-none">
               <motion.button
                 onClick={prevSlide}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 flex items-center justify-center shadow-lg hover:shadow-2xl transition-all pointer-events-auto relative overflow-hidden"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 flex items-center justify-center shadow-lg hover:shadow-2xl transition-all pointer-events-auto relative overflow-hidden"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Bubble effect inside button - using deterministic properties */}
-                {[...Array(6)].map((_, i) => {
-                  const bubbleProps = generateBubbleProperties(i + 200, [6, 12]);
-                  return (
-                    <motion.div
-                      key={i}
-                      className="absolute rounded-full bg-white/30 border border-white/50"
-                      style={{
-                        width: bubbleProps.width,
-                        height: bubbleProps.height,
-                        top: bubbleProps.top,
-                        left: bubbleProps.left,
-                      }}
-                      animate={{
-                        y: [0, -roundToDecimals(deterministicRandom(i * 40 + 200) * 20 - 8), 0],
-                        x: [0, roundToDecimals(deterministicRandom(i * 41 + 200) * 10 - 5), 0],
-                        opacity: [0, 0.8, 0],
-                        scale: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: roundToDecimals(deterministicRandom(i * 42 + 200) * 3 + 1),
-                        repeat: Infinity,
-                        delay: roundToDecimals(deterministicRandom(i * 43 + 200) * 0.5),
-                        ease: [0.42, 0, 0.58, 1]
-                      }}
-                    />
-                  );
-                })}
-                <ChevronLeft className="text-white" size={24} />
+                {/* Bubble effect inside button */}
+                {buttonBubbles}
+                <ChevronLeft className="text-white" size={20} />
               </motion.button>
 
               <motion.button
                 onClick={nextSlide}
-                className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center shadow-lg hover:shadow-2xl transition-all pointer-events-auto relative overflow-hidden"
+                className="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gradient-to-r from-orange-500 to-amber-500 flex items-center justify-center shadow-lg hover:shadow-2xl transition-all pointer-events-auto relative overflow-hidden"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {/* Bubble effect inside button - using deterministic properties */}
-                {[...Array(6)].map((_, i) => {
-                  const bubbleProps = generateBubbleProperties(i + 300, [6, 12]);
-                  return (
-                    <motion.div
-                      key={i}
-                      className="absolute rounded-full bg-white/30 border border-white/50"
-                      style={{
-                        width: bubbleProps.width,
-                        height: bubbleProps.height,
-                        top: bubbleProps.top,
-                        left: bubbleProps.left,
-                      }}
-                      animate={{
-                        y: [0, -roundToDecimals(deterministicRandom(i * 50 + 300) * 20 - 8), 0],
-                        x: [0, roundToDecimals(deterministicRandom(i * 51 + 300) * 10 - 5), 0],
-                        opacity: [0, 0.8, 0],
-                        scale: [0, 1, 0]
-                      }}
-                      transition={{
-                        duration: roundToDecimals(deterministicRandom(i * 52 + 300) * 3 + 1),
-                        repeat: Infinity,
-                        delay: roundToDecimals(deterministicRandom(i * 53 + 300) * 0.5),
-                        ease: [0.42, 0, 0.58, 1]
-                      }}
-                    />
-                  );
-                })}
-                <ChevronRight className="text-white" size={24} />
+                {/* Bubble effect inside button */}
+                {buttonBubbles}
+                <ChevronRight className="text-white" size={20} />
               </motion.button>
             </div>
 
-            {/* Enhanced Dots */}
-            <div className="flex justify-center gap-3 mt-6">
+            {/* Dots */}
+            <div className="flex justify-center gap-2 md:gap-3 mt-4 md:mt-6">
               {reviews.map((_, index) => (
                 <motion.button
                   key={index}
                   onClick={() => goToSlide(index)}
                   className={`transition-all duration-300 rounded-full ${
                     currentIndex === index
-                      ? "w-12 h-3 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500"
-                      : "w-3 h-3 bg-gray-300 hover:bg-gray-400"
+                      ? "w-8 h-2 md:w-12 md:h-3 bg-gradient-to-r from-rose-500 via-orange-500 to-amber-500"
+                      : "w-2 h-2 md:w-3 md:h-3 bg-gray-300 hover:bg-gray-400"
                   }`}
                   whileHover={{ scale: 1.2 }}
                   whileTap={{ scale: 0.9 }}
@@ -526,48 +503,22 @@ export default function ClientR2() {
             </div>
           </motion.div>
 
-          {/* Enhanced Grid Section with Bubble Effect */}
+          {/* Grid Section */}
           <motion.div variants={itemVariants}>
-            <div className="inline-block relative mb-6">
-              <h3 className="text-3xl font-bold text-center bg-gradient-to-r from-rose-600 via-orange-500 to-amber-500 bg-clip-text text-transparent">
+            <div className="inline-block relative mb-4 md:mb-6">
+              <h3 className="text-2xl md:text-3xl font-bold text-center bg-gradient-to-r from-rose-600 via-orange-500 to-amber-500 bg-clip-text text-transparent">
                 More Reviews
               </h3>
               
-              {/* Floating bubbles around subtitle - using deterministic properties */}
-              {[...Array(10)].map((_, i) => {
-                const bubbleProps = generateBubbleProperties(i + 400, [15, 35]);
-                return (
-                  <motion.div
-                    key={i}
-                    className="absolute rounded-full bg-gradient-to-r from-rose-200/70 to-orange-200/70 backdrop-blur-sm border border-white/30"
-                    style={{
-                      width: bubbleProps.width,
-                      height: bubbleProps.height,
-                      top: bubbleProps.top,
-                      left: `${roundToDecimals(deterministicRandom(i * 60 + 400) * 120 - 10)}%`,
-                    }}
-                    animate={{
-                      y: [0, -roundToDecimals(deterministicRandom(i * 61 + 400) * 50 - 15), 0],
-                      x: [0, roundToDecimals(deterministicRandom(i * 62 + 400) * 20 - 10), 0],
-                      opacity: [0, 0.8, 0],
-                      scale: [0, 1, 0]
-                    }}
-                    transition={{
-                      duration: roundToDecimals(deterministicRandom(i * 63 + 400) * 4 + 2),
-                      repeat: Infinity,
-                      delay: roundToDecimals(deterministicRandom(i * 64 + 400) * 1),
-                      ease: [0.42, 0, 0.58, 1]
-                    }}
-                  />
-                );
-              })}
+              {/* Floating bubbles around subtitle */}
+              {subtitleBubbles}
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {getGridReviews().map((review, index) => (
                 <motion.div
                   key={`${review.id}-${index}`}
-                  className="bg-white/90 backdrop-blur-md rounded-2xl p-6 border border-rose-100 shadow-lg relative overflow-hidden group"
+                  className="bg-white/90 backdrop-blur-md rounded-xl p-4 md:p-6 border border-rose-100 shadow-lg relative overflow-hidden group"
                   whileHover={{ 
                     scale: 1.05, 
                     y: -10,
@@ -577,48 +528,22 @@ export default function ClientR2() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
-                  {/* Floating bubbles inside grid card - using deterministic properties */}
-                  {[...Array(8)].map((_, i) => {
-                    const bubbleProps = generateBubbleProperties(i + 500 + index * 10, [10, 25]);
-                    return (
-                      <motion.div
-                        key={i}
-                        className="absolute rounded-full bg-gradient-to-r from-rose-200/50 to-orange-200/50 backdrop-blur-sm border border-white/30"
-                        style={{
-                          width: bubbleProps.width,
-                          height: bubbleProps.height,
-                          top: bubbleProps.top,
-                          left: bubbleProps.left,
-                        }}
-                        animate={{
-                          y: [0, -roundToDecimals(deterministicRandom(i * 70 + 500 + index * 10) * 30 - 10), 0],
-                          x: [0, roundToDecimals(deterministicRandom(i * 71 + 500 + index * 10) * 15 - 7.5), 0],
-                          opacity: [0, 0.7, 0],
-                          scale: [0, 1, 0]
-                        }}
-                        transition={{
-                          duration: roundToDecimals(deterministicRandom(i * 72 + 500 + index * 10) * 4 + 2),
-                          repeat: Infinity,
-                          delay: roundToDecimals(deterministicRandom(i * 73 + 500 + index * 10) * 0.8),
-                          ease: [0.42, 0, 0.58, 1]
-                        }}
-                      />
-                    );
-                  })}
+                  {/* Floating bubbles inside grid card */}
+                  {gridCardBubbles}
                   
                   {/* Background gradient overlay on hover */}
                   <motion.div 
                     className={`absolute inset-0 bg-gradient-to-br ${review.gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}
                   />
                   
-                  <motion.div className="absolute top-4 right-4 opacity-5">
-                    <Quote size={60} className="text-orange-500" />
+                  <motion.div className="absolute top-3 right-3 opacity-5">
+                    <Quote size={48} className="text-orange-500" />
                   </motion.div>
 
                   <div className="flex flex-col items-center text-center relative z-10">
                     {/* Image with enhanced hover effect */}
                     <motion.div
-                      className={`relative w-20 h-20 rounded-full overflow-hidden border-3 border-transparent bg-gradient-to-br ${review.gradient} p-1 shadow-md mb-4`}
+                      className={`relative w-16 h-16 md:w-20 md:h-20 rounded-full overflow-hidden border-2 border-transparent bg-gradient-to-br ${review.gradient} p-1 shadow-md mb-3 md:mb-4`}
                       whileHover={{ 
                         scale: 1.15, 
                         rotate: 8,
@@ -637,8 +562,8 @@ export default function ClientR2() {
                       </div>
                     </motion.div>
 
-                    <div className="mb-3">
-                      <h3 className="text-lg font-bold text-gray-800 mb-1 group-hover:text-rose-600 transition-colors">
+                    <div className="mb-2 md:mb-3">
+                      <h3 className="text-base md:text-lg font-bold text-gray-800 mb-1 group-hover:text-rose-600 transition-colors">
                         {review.name}
                       </h3>
                       <p
@@ -648,17 +573,17 @@ export default function ClientR2() {
                       </p>
                     </div>
 
-                    <div className="flex gap-1 mb-3">
+                    <div className="flex gap-1 mb-2 md:mb-3">
                       {[...Array(review.rating)].map((_, i) => (
                         <Star
                           key={i}
                           className="fill-yellow-400 text-yellow-400"
-                          size={16}
+                          size={14}
                         />
                       ))}
                     </div>
 
-                    <motion.p className="text-gray-700 text-sm leading-relaxed italic group-hover:text-gray-900 transition-colors">
+                    <motion.p className="text-gray-700 text-xs md:text-sm leading-relaxed italic group-hover:text-gray-900 transition-colors">
                       &ldquo;{review.review}&rdquo;
                     </motion.p>
                   </div>

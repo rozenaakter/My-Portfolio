@@ -33,10 +33,11 @@ const Footer = () => {
   ];
 
   const quickLinks = [
-    { name: 'Home', href: '#home' },
+    { name: 'Home', href: '#header' },
     { name: 'About', href: '#about' },
-    { name: 'Projects', href: '#projects' },
-    { name: 'Skills', href: '#skills' },
+    {name: 'Services', href: '#services' },
+    { name: 'Projects', href: '#portfolio' },
+    { name: 'Blog', href: '#blog' },
     { name: 'Contact', href: '#contact' }
   ];
 
@@ -143,15 +144,15 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-start space-x-3 text-gray-300">
                 <Mail className="w-4 h-4 text-purple-300 mt-0.5" />
-                <span className="text-sm">your.email@example.com</span>
+                <span className="text-sm">90rozena@gmail.com</span>
               </div>
               <div className="flex items-start space-x-3 text-gray-300">
                 <Phone className="w-4 h-4 text-purple-300 mt-0.5" />
-                <span className="text-sm">+1 (555) 123-4567</span>
+                <span className="text-sm">+8801723456789</span>
               </div>
               <div className="flex items-start space-x-3 text-gray-300">
                 <MapPin className="w-4 h-4 text-purple-300 mt-0.5" />
-                <span className="text-sm">Your City, Country</span>
+                <span className="text-sm">Dhaka, Bangladesh</span>
               </div>
             </div>
           </motion.div>
