@@ -8,7 +8,7 @@ const firaCode = Fira_Code({ subsets: ['latin'], variable: '--font-fira-code' })
 
 export const metadata = {
   title: 'dev Rozena | Portfolio',
-  description: 'Full-stack developer portfolio',
+  description: 'Fontend developer portfolio',
 };
 
 export default function RootLayout({ children }: {children:ReactNode}) {
