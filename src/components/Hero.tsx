@@ -2,6 +2,7 @@
 
 import { motion, Variants, useMotionValue, useTransform } from 'framer-motion';
 import { Award, Briefcase, Users, Star, MessageCircle, Hand, Sparkles } from 'lucide-react';
+import Image from 'next/image';
 import { useState, useMemo, useEffect } from 'react';
 
 interface Particle {
@@ -131,7 +132,7 @@ export default function Hero2() {
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1] // স্ট্রিং এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
       }
     }
   };
@@ -143,7 +144,7 @@ export default function Hero2() {
       opacity: 1,
       transition: {
         duration: 0.8,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1] // স্ট্রিং এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
       }
     }
   };
@@ -179,9 +180,11 @@ export default function Hero2() {
                   backgroundClip: 'padding-box, border-box',
                 }}
               >
-                <img 
+                <Image 
                   src="/roze.jpeg" 
                   alt="Your Name" 
+                  width={256} // width প্রপার্টি যোগ করা হয়েছে
+                  height={256} // height প্রপার্টি যোগ করা হয়েছে
                   className="w-full h-full object-cover"
                 />
               </div>
@@ -454,7 +457,7 @@ export default function Hero2() {
                   className="flex items-center space-x-2 bg-transparent border-2 border-purple-500 text-purple-300 px-8 py-3.5 rounded-full font-semibold hover:bg-purple-500/20 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/30 transition-all duration-300 relative overflow-hidden group"
                 >
                   <MessageCircle size={20} className="group-hover:rotate-12 transition-transform duration-300" />
-                  <span>Let's Talk</span>
+                  <span>Let&apos;s Talk</span>
                 </motion.button>
               </motion.div>
             </div>
@@ -479,9 +482,11 @@ export default function Hero2() {
                 boxShadow: '0 0 60px rgba(168, 85, 247, 0.5), 0 0 100px rgba(99, 102, 241, 0.4), 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(168, 85, 247, 0.2)',
               }}
             >
-              <img 
+              <Image 
                 src="/roze.jpeg" 
-                alt="Your Name" 
+                alt="Rozena Akter" 
+                width={256} // width প্রপার্টি যোগ করা হয়েছে
+                height={256} // height প্রপার্টি যোগ করা হয়েছে
                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-purple-900/70 to-transparent"></div>

@@ -25,17 +25,13 @@ const nextConfig: NextConfig = {
     domains: ['images.unsplash.com', 'images.pexels.com'],
   },
   
-  // যদি আপনার অন্য কনফিগারেশন থাকে
-  // উদাহরণস্বরূপ:
-  experimental: {
-    // যদি আপনি অ্যাপ ডিরেক্টরি ব্যবহার করেন
-    appDir: true,
-  },
+  // যদি আপনার GitHub Pages এ ডিপ্লয় করতে চান, তাহলে basePath যোগ করুন
+  // basePath: process.env.GITHUB_PAGES ? '/test1-protfolio' : '',
   
   // যদি আপনার এনভায়রনমেন্ট ভেরিয়েবল থাকে
-  env: {
-    CUSTOM_KEY: process.env.CUSTOM_KEY,
-  },
+  // env: {
+  //   CUSTOM_KEY: process.env.CUSTOM_KEY,
+  // },
 };
 
 export default nextConfig;

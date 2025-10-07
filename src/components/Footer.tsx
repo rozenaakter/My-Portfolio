@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Heart, Mail, Phone, MapPin, ExternalLink, ArrowUp, Send } from 'lucide-react';
+import { Mail, Phone, MapPin, ExternalLink, ArrowUp, Send } from 'lucide-react';
 import { useState } from 'react';
 
 const Footer = () => {

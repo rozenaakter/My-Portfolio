@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { Code, Palette, Rocket, Zap, GraduationCap, MapPin, BookOpen, Plane, Heart } from 'lucide-react';
+import { motion, useInView, Variants } from 'framer-motion';
+import { Code, Palette, Rocket, Zap, GraduationCap, MapPin, Plane, Heart } from 'lucide-react';
 import { useRef } from 'react';
 
 export default function About() {
@@ -23,7 +23,7 @@ export default function About() {
     { icon: Code, label: "Open Source", color: "from-green-500 to-teal-500" }
   ];
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -34,14 +34,14 @@ export default function About() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1]
       }
     }
   };
@@ -63,7 +63,7 @@ export default function About() {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1]
           }}
         />
         <motion.div
@@ -75,7 +75,7 @@ export default function About() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1]
           }}
         />
       </div>
@@ -126,13 +126,13 @@ export default function About() {
                   My Journey
                 </h3>
                 <p className="text-gray-300 leading-relaxed mb-4">
-                  I'm a passionate <span className="text-purple-400 font-semibold">Full Stack Developer</span> with over 5 years of experience in creating stunning web applications. My journey started with a curiosity about how websites work, and it has evolved into a career I absolutely love.
+                  I&apos;m a passionate <span className="text-purple-400 font-semibold">Full Stack Developer</span> with over 5 years of experience in creating stunning web applications. My journey started with a curiosity about how websites work, and it has evolved into a career I absolutely love.
                 </p>
                 <p className="text-gray-300 leading-relaxed mb-4">
-                  I specialize in building <span className="text-cyan-400 font-semibold">modern, responsive, and user-friendly</span> applications using the latest technologies. Every project is an opportunity to learn something new and push the boundaries of what's possible.
+                  I specialize in building <span className="text-cyan-400 font-semibold">modern, responsive, and user-friendly</span> applications using the latest technologies. Every project is an opportunity to learn something new and push the boundaries of what&apos;s possible.
                 </p>
                 <p className="text-gray-300 leading-relaxed">
-                  When I'm not coding, you'll find me exploring new technologies, contributing to open-source projects, or mentoring aspiring developers.
+                  When I&apos;m not coding, you&apos;ll find me exploring new technologies, contributing to open-source projects, or mentoring aspiring developers.
                 </p>
               </motion.div>
 
@@ -253,7 +253,7 @@ export default function About() {
                                 transition={{ 
                                   delay: 2 + index * 0.1,
                                   duration: 1,
-                                  ease: "easeOut"
+                                  ease: [0.25, 0.1, 0.25, 1]
                                 }}
                               />
                             </div>
@@ -277,7 +277,7 @@ export default function About() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <span className="relative z-10">Let's Work Together</span>
+              <span className="relative z-10">Let&apos;s Work Together</span>
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-cyan-600"
                 initial={{ x: "100%" }}

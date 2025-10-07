@@ -1,7 +1,8 @@
 "use client";
 
-import { motion, useInView } from 'framer-motion';
-import { ExternalLink, Github } from 'lucide-react';
+import { motion, useInView, Variants } from 'framer-motion'; // ← Variants ইমপোর্ট করা হয়েছে
+import { ExternalLink} from 'lucide-react';
+import Image from 'next/image';
 import { useRef, useState } from 'react';
 
 export default function PortfolioSection() {
@@ -79,7 +80,7 @@ export default function PortfolioSection() {
     ? projects 
     : projects.filter(project => project.category === activeCategory);
 
-  const containerVariants = {
+  const containerVariants: Variants = { // ← টাইপ ডিক্লেয়ারেশন যোগ করা হয়েছে
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -90,14 +91,14 @@ export default function PortfolioSection() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = { // ← টাইপ ডিক্লেয়ারেশন যোগ করা হয়েছে
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1] // ← "easeOut" এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
       }
     }
   };
@@ -119,7 +120,7 @@ export default function PortfolioSection() {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1] // ← "easeInOut" এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
           }}
         />
         <motion.div
@@ -131,7 +132,7 @@ export default function PortfolioSection() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1] // ← "easeInOut" এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
           }}
         />
       </div>
@@ -187,19 +188,21 @@ export default function PortfolioSection() {
 
           {/* Portfolio grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProjects.map((project, index) => (
+            {filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
                 variants={itemVariants}
                 className="bg-gray-300 rounded-xl overflow-hidden shadow-lg border border-gray-700 group"
                 whileHover={{ y: -10, boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)" }}
-                transition={{ duration: 0.3 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }} // ← কিউবিক-বেজিয়ার অ্যারে যোগ
               >
                 {/* Project image */}
                 <div className="relative overflow-hidden h-48">
-                  <img
+                  <Image
                     src={project.image}
                     alt={project.title}
+                    width={800} // width প্রপার্টি যোগ করা হয়েছে
+                    height={500} // height প্রপার্টি যোগ করা হয়েছে
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className={`absolute inset-0 bg-gradient-to-t ${project.gradient} opacity-0 group-hover:opacity-30 transition-opacity duration-300`}></div>
@@ -268,7 +271,7 @@ export default function PortfolioSection() {
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={{ scale: 0.95 }}
             >
-              Let's Work Together
+              Let&apos;s Work Together
             </motion.a>
           </motion.div>
         </motion.div>

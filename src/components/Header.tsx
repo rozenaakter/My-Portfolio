@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { Menu, X, Search } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, Variants } from 'framer-motion';
+import Image from 'next/image';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -12,13 +13,13 @@ export default function Header() {
   const toggleSearch = () => setIsSearchOpen(!isSearchOpen);
 
   // Mobile menu animation variants
-  const mobileMenuVariants = {
+  const mobileMenuVariants: Variants = {
     closed: {
       opacity: 0,
       height: 0,
       transition: {
         duration: 0.3,
-        ease: "easeInOut"
+        ease: [0.42, 0, 0.58, 1]
       }
     },
     open: {
@@ -26,19 +27,20 @@ export default function Header() {
       height: "auto",
       transition: {
         duration: 0.4,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1]
       }
     }
   };
 
   // Mobile search animation variants
-  const mobileSearchVariants = {
+  const mobileSearchVariants: Variants = {
     closed: {
       opacity: 0,
       y: -10,
       height: 0,
       transition: {
-        duration: 0.2
+        duration: 0.2,
+        ease: [0.42, 0, 0.58, 1]
       }
     },
     open: {
@@ -47,20 +49,26 @@ export default function Header() {
       height: "auto",
       transition: {
         duration: 0.3,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1]
       }
     }
   };
 
   // Menu item animation
-  const menuItemVariants = {
+  const menuItemVariants: Variants = {
     closed: {
       opacity: 0,
-      x: -20
+      x: -20,
+      transition: {
+        ease: [0.42, 0, 0.58, 1]
+      }
     },
     open: {
       opacity: 1,
-      x: 0
+      x: 0,
+      transition: {
+        ease: [0.25, 0.1, 0.25, 1]
+      }
     }
   };
 
@@ -72,10 +80,56 @@ export default function Header() {
           <div className="flex items-center space-x-3">
             <motion.div 
               whileHover={{ rotate: 360 }}
-              transition={{ duration: 0.5 }}
-              className="w-10 h-10 bg-indigo-500 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30"
+              transition={{ duration: 0.5, ease: [0.42, 0, 0.58, 1] }}
+              className="relative w-12 h-12"
             >
-              <span className="text-gray-900 font-bold text-xl">R</span>
+              {/* অ্যানিমেটেড গ্রেডিয়েন্ট বর্ডার */}
+              <motion.div 
+                className="absolute inset-0 rounded-full p-[2px]"
+                style={{
+                  background: "linear-gradient(45deg, #a855f7, #6366f1, #ec4899, #8b5cf6)",
+                  backgroundSize: "300% 300%",
+                }}
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  ease: "linear"
+                }}
+              >
+                {/* ইনার ব্যাকগ্রাউন্ড */}
+                <div className="w-full h-full rounded-full bg-gray-900 flex items-center justify-center overflow-hidden">
+                  <Image 
+                    src="/roze.jpeg" 
+                    alt="Rozena Akter" 
+                    width={40}
+                    height={40}
+                    className="w-full h-full object-cover rounded-full"
+                    style={{
+                      filter: "saturate(1.2) contrast(1.1)", // ইমেজ কোয়ালিটি উন্নত করার জন্য
+                      imageRendering: "crisp-edges", // ইমেজ রেন্ডারিং উন্নত করার জন্য
+                    }}
+                  />
+                </div>
+              </motion.div>
+              
+              {/* গ্লো ইফেক্ট */}
+              <motion.div 
+                className="absolute inset-0 rounded-full opacity-70 pointer-events-none"
+                style={{
+                  background: "radial-gradient(circle at center, rgba(168, 85, 247, 0.8) 0%, rgba(99, 102, 241, 0) 70%)",
+                }}
+                animate={{
+                  opacity: [0.5, 0.8, 0.5],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
             </motion.div>
             <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
               Rozena Akter
@@ -155,7 +209,8 @@ export default function Header() {
                 variants={{
                   open: {
                     transition: {
-                      staggerChildren: 0.1
+                      staggerChildren: 0.1,
+                      ease: [0.42, 0, 0.58, 1]
                     }
                   }
                 }}

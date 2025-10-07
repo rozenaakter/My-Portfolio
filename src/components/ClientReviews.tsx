@@ -1,11 +1,11 @@
 "use client";
 
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { motion, useInView, Variants } from 'framer-motion';
 import { Star, Quote, ChevronLeft, ChevronRight } from 'lucide-react';
+import Image from 'next/image';
 import { useRef, useState, useEffect } from 'react';
 
 // Helper function to generate deterministic pseudo-random values
-// This ensures server and client render the same values
 const deterministicRandom = (seed: number) => {
   const x = Math.sin(seed) * 10000;
   return x - Math.floor(x);
@@ -19,7 +19,7 @@ const roundToDecimals = (value: number, decimals: number = 4) => {
 
 // Generate bubble properties with consistent values
 const generateBubbleProperties = (index: number, sizeRange: [number, number] = [30, 80]) => {
-  const seed = index * 100; // Use a deterministic seed
+  const seed = index * 100;
   const size = roundToDecimals(deterministicRandom(seed) * (sizeRange[1] - sizeRange[0]) + sizeRange[0]);
   const top = roundToDecimals(deterministicRandom(seed + 1) * 100);
   const left = roundToDecimals(deterministicRandom(seed + 2) * 100);
@@ -47,7 +47,7 @@ export default function ClientR2() {
       name: "Sarah Johnson",
       designation: "CEO, TechStart Inc",
       image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop",
-      review: "Working with this developer was an absolute pleasure! The attention to detail and creative solutions provided exceeded our expectations. Our website now perfectly represents our brand and has significantly increased our conversion rates.",
+      review: "Working with Rozena & its experience was an absolute pleasure! The attention to detail and creative solutions provided exceeded our expectations. Our website now perfectly represents our brand and has significantly increased our conversion rates.",
       rating: 5,
       gradient: "from-rose-400 to-pink-500"
     },
@@ -83,7 +83,7 @@ export default function ClientR2() {
       name: "Lisa Anderson",
       designation: "Product Manager, AppVenture",
       image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=400&h=400&fit=crop",
-      review: "Best developer we've worked with! Creative, responsive, and delivers beyond expectations. Our mobile app is now a huge success in the market thanks to their expertise.",
+      review: "Best developer we have worked with! Creative, responsive, and delivers beyond expectations. Our mobile app is now a huge success in the market thanks to their expertise.",
       rating: 5,
       gradient: "from-orange-400 to-amber-500"
     },
@@ -119,7 +119,7 @@ export default function ClientR2() {
       name: "Sophia Martinez",
       designation: "Brand Manager, Lifestyle Co",
       image: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop",
-      review: "Our brand's digital transformation was seamless thanks to this developer's expertise. The new website perfectly captures our essence and has received rave reviews from customers.",
+      review: "Our brands digital transformation was seamless thanks to this developer's expertise. The new website perfectly captures our essence and has received rave reviews from customers.",
       rating: 5,
       gradient: "from-violet-400 to-purple-500"
     },
@@ -141,7 +141,7 @@ export default function ClientR2() {
     }, 3000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [reviews.length]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % reviews.length);
@@ -151,7 +151,7 @@ export default function ClientR2() {
     setCurrentIndex((prev) => (prev - 1 + reviews.length) % reviews.length);
   };
 
-  const goToSlide = (index) => {
+  const goToSlide = (index: number) => {
     setCurrentIndex(index);
   };
 
@@ -161,7 +161,7 @@ export default function ClientR2() {
     return reviews.slice(0, 4);
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -172,14 +172,14 @@ export default function ClientR2() {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = {
     hidden: { y: 30, opacity: 0 },
     visible: {
       y: 0,
       opacity: 1,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1]
       }
     }
   };
@@ -204,7 +204,7 @@ export default function ClientR2() {
           transition={{
             duration: 10,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1]
           }}
         />
         <motion.div
@@ -218,7 +218,7 @@ export default function ClientR2() {
           transition={{
             duration: 8,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1]
           }}
         />
         <motion.div
@@ -232,7 +232,7 @@ export default function ClientR2() {
           transition={{
             duration: 12,
             repeat: Infinity,
-            ease: "easeInOut"
+            ease: [0.42, 0, 0.58, 1]
           }}
         />
         
@@ -259,7 +259,7 @@ export default function ClientR2() {
                 duration: bubbleProps.duration,
                 repeat: Infinity,
                 delay: bubbleProps.delay,
-                ease: "easeInOut"
+                ease: [0.42, 0, 0.58, 1]
               }}
             />
           );
@@ -307,7 +307,7 @@ export default function ClientR2() {
                       duration: roundToDecimals(deterministicRandom(i * 25) * 5 + 3),
                       repeat: Infinity,
                       delay: roundToDecimals(deterministicRandom(i * 26) * 2),
-                      ease: "easeInOut"
+                      ease: [0.42, 0, 0.58, 1]
                     }}
                   />
                 );
@@ -331,7 +331,7 @@ export default function ClientR2() {
               <motion.div
                 className="flex"
                 animate={{ x: `-${currentIndex * 100}%` }}
-                transition={{ duration: 0.8, ease: "easeInOut" }}
+                transition={{ duration: 0.8, ease: [0.42, 0, 0.58, 1] }}
               >
                 {reviews.map((review) => (
                   <div key={review.id} className="w-full flex-shrink-0 px-4">
@@ -339,7 +339,7 @@ export default function ClientR2() {
                     <motion.div
                       className="bg-white/90 backdrop-blur-md rounded-3xl p-6 md:p-8 border border-rose-100 shadow-xl relative overflow-hidden group h-full flex flex-col"
                       whileHover={{ scale: 1.02, y: -5 }}
-                      transition={{ duration: 0.3 }}
+                      transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                     >
                       {/* Floating bubbles inside card - using deterministic properties */}
                       {[...Array(10)].map((_, i) => {
@@ -364,7 +364,7 @@ export default function ClientR2() {
                               duration: roundToDecimals(deterministicRandom(i * 32 + 100) * 5 + 3),
                               repeat: Infinity,
                               delay: roundToDecimals(deterministicRandom(i * 33 + 100) * 1),
-                              ease: "easeInOut"
+                              ease: [0.42, 0, 0.58, 1]
                             }}
                           />
                         );
@@ -380,12 +380,14 @@ export default function ClientR2() {
                           <motion.div
                             className={`relative w-24 h-24 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-br ${review.gradient} p-1 shadow-lg`}
                             whileHover={{ scale: 1.1, rotate: 5 }}
-                            transition={{ duration: 0.3 }}
+                            transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
                           >
                             <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                              <img
+                              <Image
                                 src={review.image}
                                 alt={review.name}
+                                width={96}
+                                height={96}
                                 className="w-full h-full object-cover"
                               />
                             </div>
@@ -416,7 +418,7 @@ export default function ClientR2() {
                         {/* Review Text with professional look */}
                         <div className="md:w-2/3 text-center md:text-left">
                           <motion.p className="text-gray-700 text-base md:text-lg leading-relaxed italic">
-                            "{review.review}"
+                            &ldquo;{review.review}&rdquo;
                           </motion.p>
                           <motion.div
                             className={`h-1 w-24 bg-gradient-to-r ${review.gradient} rounded-full mt-4 mx-auto md:mx-0`}
@@ -460,7 +462,7 @@ export default function ClientR2() {
                         duration: roundToDecimals(deterministicRandom(i * 42 + 200) * 3 + 1),
                         repeat: Infinity,
                         delay: roundToDecimals(deterministicRandom(i * 43 + 200) * 0.5),
-                        ease: "easeInOut"
+                        ease: [0.42, 0, 0.58, 1]
                       }}
                     />
                   );
@@ -497,7 +499,7 @@ export default function ClientR2() {
                         duration: roundToDecimals(deterministicRandom(i * 52 + 300) * 3 + 1),
                         repeat: Infinity,
                         delay: roundToDecimals(deterministicRandom(i * 53 + 300) * 0.5),
-                        ease: "easeInOut"
+                        ease: [0.42, 0, 0.58, 1]
                       }}
                     />
                   );
@@ -554,7 +556,7 @@ export default function ClientR2() {
                       duration: roundToDecimals(deterministicRandom(i * 63 + 400) * 4 + 2),
                       repeat: Infinity,
                       delay: roundToDecimals(deterministicRandom(i * 64 + 400) * 1),
-                      ease: "easeInOut"
+                      ease: [0.42, 0, 0.58, 1]
                     }}
                   />
                 );
@@ -571,7 +573,7 @@ export default function ClientR2() {
                     y: -10,
                     boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)"
                   }}
-                  transition={{ duration: 0.4, ease: "easeOut" }}
+                  transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                 >
@@ -598,7 +600,7 @@ export default function ClientR2() {
                           duration: roundToDecimals(deterministicRandom(i * 72 + 500 + index * 10) * 4 + 2),
                           repeat: Infinity,
                           delay: roundToDecimals(deterministicRandom(i * 73 + 500 + index * 10) * 0.8),
-                          ease: "easeInOut"
+                          ease: [0.42, 0, 0.58, 1]
                         }}
                       />
                     );
@@ -620,14 +622,16 @@ export default function ClientR2() {
                       whileHover={{ 
                         scale: 1.15, 
                         rotate: 8,
-                        borderColor: review.gradient.split(' ')[1] // Use the gradient color on hover
+                        borderColor: review.gradient.split(' ')[1]
                       }}
-                      transition={{ duration: 0.4 }}
+                      transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
                     >
                       <div className="w-full h-full rounded-full overflow-hidden bg-white">
-                        <img
+                        <Image
                           src={review.image}
                           alt={review.name}
+                          width={80}
+                          height={80}
                           className="w-full h-full object-cover"
                         />
                       </div>
@@ -655,7 +659,7 @@ export default function ClientR2() {
                     </div>
 
                     <motion.p className="text-gray-700 text-sm leading-relaxed italic group-hover:text-gray-900 transition-colors">
-                      "{review.review}"
+                      &ldquo;{review.review}&rdquo;
                     </motion.p>
                   </div>
                 </motion.div>

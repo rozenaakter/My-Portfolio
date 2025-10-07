@@ -1,6 +1,6 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion'; // ← Variants ইমপোর্ট করা হয়েছে
 import { Mail, Phone, MapPin, Send, Github, Linkedin, Twitter, MessageCircle } from 'lucide-react';
 import { useState } from 'react';
 
@@ -87,7 +87,7 @@ const Contact = () => {
     setTimeout(() => setIsSubmitted(false), 5000);
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = { // ← টাইপ ডিক্লেয়ারেশন যোগ করা হয়েছে
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
@@ -97,14 +97,14 @@ const Contact = () => {
     }
   };
 
-  const itemVariants = {
+  const itemVariants: Variants = { // ← টাইপ ডিক্লেয়ারেশন যোগ করা হয়েছে
     hidden: { opacity: 0, y: 30 },
     visible: {
       opacity: 1,
       y: 0,
       transition: {
         duration: 0.6,
-        ease: "easeOut"
+        ease: [0.25, 0.1, 0.25, 1] // ← স্ট্রিং এর পরিবর্তে কিউবিক-বেজিয়ার অ্যারে
       }
     }
   };
@@ -147,7 +147,7 @@ const Contact = () => {
 
             {/* Contact Methods */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {contactMethods.map((method, index) => (
+              {contactMethods.map((method) => (
                 <motion.a
                   key={method.title}
                   href={method.link}
