@@ -205,22 +205,23 @@ export default function Header() {
           {/* ডান দিকে বাটন */}
           <div className="flex items-center space-x-4">
             {/* Hire Me বাটন */}
-            <motion.button
-              whileHover={{ 
-                scale: 1.05,
-                boxShadow: "0 10px 30px -5px rgba(168, 85, 247, 0.5)"
-              }}
-              whileTap={{ scale: 0.95 }}
-              className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 relative overflow-hidden"
-            >
-              <span className="relative z-10">Hire Me</span>
-              <motion.div 
-                className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600"
-                initial={{ x: "-100%" }}
-                whileHover={{ x: 0 }}
-                transition={{ duration: 0.3 }}
-              />
-            </motion.button>
+            <motion.a
+  href="#contact"
+  whileHover={{ 
+    scale: 1.05,
+    boxShadow: "0 10px 30px -5px rgba(168, 85, 247, 0.5)"
+  }}
+  whileTap={{ scale: 0.95 }}
+  className="bg-gradient-to-r from-purple-500 to-indigo-500 text-white px-6 py-2.5 rounded-full font-semibold transition-all duration-300 relative overflow-hidden inline-block cursor-pointer"
+>
+  <span className="relative z-10">Hire Me</span>
+  <motion.div 
+    className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600"
+    initial={{ x: "-100%" }}
+    whileHover={{ x: 0 }}
+    transition={{ duration: 0.3 }}
+  />
+</motion.a>
 
             {/* মোবাইল মেনু টগল বাটন */}
             <motion.button 

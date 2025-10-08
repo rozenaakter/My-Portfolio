@@ -14,7 +14,7 @@ interface Particle {
   life: number;
 }
 
-export default function Hero2() {
+export default function Home() {
   const [isHovered, setIsHovered] = useState(false);
   const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
   const [isInSection, setIsInSection] = useState(false);

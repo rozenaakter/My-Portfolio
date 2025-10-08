@@ -4,18 +4,18 @@ import BlogSection from '@/components/BlogSection';
 import Contact from '@/components/Contact';
 import Footer from '@/components/Footer';
 import Header from '@/components/Header';
-import Hero from '@/components/Hero';
+import Home from '@/components/Hero';
 import PageTitleHandler from '@/components/PageTitleHandler';
 import Portfolio from '@/components/Portfolio';
 import Service from '@/components/Service';
 import Testimonials from '@/components/Testimonials';
 
-export default function Home() {
+export default function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <PageTitleHandler/>
       <Header />
-      <Hero/>
+      <Home/>
       <About/>
       <Service/>
       <Portfolio/>
