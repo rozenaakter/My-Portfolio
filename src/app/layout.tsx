@@ -7,8 +7,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const firaCode = Fira_Code({ subsets: ['latin'], variable: '--font-fira-code' });
 
 export const metadata = {
-  title: 'dev Rozena | Portfolio',
-  description: 'Fontend developer portfolio',
+  title: 'Rozena Akter - Frontend Developer',
+  description: 'Creative Frontend Developer & UI/UX Enthusiast specializing in React, Next.js, and modern web technologies',
 };
 
 export default function RootLayout({ children }: {children:ReactNode}) {

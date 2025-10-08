@@ -152,7 +152,7 @@ export default function Hero2() {
   if (!isMounted) {
     // SSR এর সময় static HTML রিটার্ন করুন
     return (
-      <section className="min-h-screen flex items-center bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900 text-white pt-16 relative overflow-hidden">
+      <section id='home' className="min-h-screen flex items-center bg-gradient-to-b from-gray-900 via-purple-900 to-indigo-900 text-white pt-16 relative overflow-hidden">
         <div className="container mx-auto px-4 py-12 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Content side */}

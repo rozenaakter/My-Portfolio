@@ -107,7 +107,7 @@ export default function PortfolioSection() {
     <section
       ref={ref}
       className="py-20 px-4 bg-gradient-to-br from-indigo-300 via-yellow-100 to-indigo-450 relative overflow-hidden"
-      id="portfolio"
+      id="protfolio"
     >
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">

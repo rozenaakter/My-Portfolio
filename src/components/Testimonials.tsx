@@ -69,7 +69,7 @@ const Bubble = ({ index, sizeRange, seedOffset = 0 }: {
   );
 };
 
-export default function ClientR2() {
+export default function Testimonials() {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.1, margin: "-50px" });
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -291,7 +291,7 @@ export default function ClientR2() {
     <section
       ref={ref}
       className="min-h-screen bg-gradient-to-br from-rose-50 via-orange-50 to-amber-50 text-gray-900 py-12 md:py-16 px-4 relative overflow-hidden"
-      id="reviews"
+      id="testimonials"
     >
       {/* Background Decorative Elements with Bubbles */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
